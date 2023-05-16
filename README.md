@@ -5,7 +5,7 @@ Phase Neural Operator for Multi-Station Phase Picking from Dynamic Seismic Netwo
 ![Method](https://github.com/sun-hongyu/PhaseNO/blob/master/phaseno.png)
 
 
-## 1. Citation:
+## 1. Citation
 ```
 Sun, H., Ross, Z.E., Zhu, W. and Azizzadenesheli, K., 2023. Next-Generation Seismic Monitoring with Neural Operators. arXiv preprint arXiv:2305.03269.
 ```
@@ -16,9 +16,9 @@ Located in directory: models/*.ckpt
 ## 3. Example 
 Located in directory: example
 
-Use the pre-trained model to pick phases from one-hour continuous data from the 2019 Ridgecrest earthquake sequence.
+Use the pre-trained model to pick phases from one-hour continuous data of the 2019 Ridgecrest earthquake sequence.
 
-There are three scripts that should be used in the following order to reproduce the results in this example
+There are three scripts that should be used in the following order to reproduce the results in this example:
 
 1. phaseno_predict.ipynb
 2. phaseno_postprocess.ipynb
