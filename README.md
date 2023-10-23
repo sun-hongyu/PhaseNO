@@ -24,8 +24,7 @@ Located in directory: example
 
 Use the pre-trained model to pick phases from one-hour continuous data of the 2019 Ridgecrest earthquake sequence.
 
-There are three scripts that should be used in the following order to reproduce the results in this example:
+There are two scripts that can be used in the following order to reproduce the results in this example:
 
 1. phaseno_predict.ipynb
-2. phaseno_postprocess.ipynb
-3. phaseno_plot.ipynb
+2. phaseno_plot.ipynb
