@@ -1,4 +1,6 @@
-# PhaseNO
+[![DOI](https://zenodo.org/badge/641315064.svg)](https://zenodo.org/doi/10.5281/zenodo.10224300)
+
+# PhaseNO 
 Phase Neural Operator for Multi-Station Phase Picking from Dynamic Seismic Networks.
 
 ![Method](https://github.com/sun-hongyu/PhaseNO/blob/master/phaseno.png)
