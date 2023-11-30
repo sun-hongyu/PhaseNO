@@ -22,10 +22,12 @@ Located in directory: models/*.ckpt
 ## 4. Example 
 Located in directory: example
 
-1. phaseno_predict.ipynb
-Use the pre-trained model to pick phases from one-hour continuous data of the 2019 Ridgecrest earthquake sequence.
+- phaseno_predict.ipynb
+  
+  Use the pre-trained model to pick phases from one-hour continuous data of the 2019 Ridgecrest earthquake sequence.
 
-2. phaseno_plot.ipynb
-Plot the predicted probabilities and picks for all stations.
+- phaseno_plot.ipynb
+  
+  Plot the predicted probabilities and picks for all stations.
 
 
