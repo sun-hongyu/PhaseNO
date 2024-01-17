@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from torch_geometric.nn import knn_graph
+from torch_geometric.nn import knn_graph, radius_graph
 
 
 def normalize_positions(stations):
@@ -69,6 +69,27 @@ def generate_knn_edge_index(stations, k=4):
     station_coords = normalize_positions(stations)
     coords = torch.from_numpy(station_coords).float()
     edge_index = knn_graph(coords, k=k)
+
+    # Get coordinates of each vertex in the edges and build the edge_index
+    # data structure needed for GNO
+    i_coords = torch.from_numpy(station_coords[edge_index[0]])
+    j_coords = torch.from_numpy(station_coords[edge_index[1]])
+    edge_index = torch.vstack([edge_index, i_coords.T, j_coords.T])
+
+    return edge_index, station_coords
+
+def generate_radius_edge_index(stations, radius, max_num_neighbors=18):
+    """Creates an edge index of neighbors with in a certain radius
+    For a NN graph network. Reduces computational time wrt fully connected.
+    radius argument currently is in dimensionaless fractional units, fraction
+    of total extent of graph.
+
+    Returns and edge_index as a Torch.tensor
+    """
+
+    station_coords = normalize_positions(stations)
+    coords = torch.from_numpy(station_coords).float()
+    edge_index = radius_graph(coords, r=radius, max_num_neighbors=max_num_neighbors)
 
     # Get coordinates of each vertex in the edges and build the edge_index
     # data structure needed for GNO
