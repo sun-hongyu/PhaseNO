@@ -27,6 +27,14 @@ class PhaseNOPredictor:
                 Right now, the radius is in fraction of total domain. E.g., if the overall range of the
                 seismic network is 2 degrees, a radius of 0.2 will be 0.4 degrees.
 
+        Examples:
+            First instantiate the class with the network file and graph type
+
+            >>> ml_detector = PhaseNOPredictor(net, graph_type="knn", k=10)
+
+            Then predict pick probabilties
+
+            >>> probs = ml_detector(traces)
         """
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.net = net
