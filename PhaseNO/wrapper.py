@@ -17,8 +17,15 @@ class PhaseNOPredictor:
     def __init__(self, net, graph_type=None, k=10, radius=1):
         """PhaseNO predictor for BPMF
 
-        Takes a BPMF network object at initialization to create the graph.
-        Can select the graph type
+        Args:
+            net (BPMF.dataset.Network): Network object from BPMF, or a Pandas dataframe with
+                a list of station names, latitude, and longitude of each station.
+            graph_type (str | None): Either "knn" for a k-nearest neighbors graph or "radius"
+                for distance based neighborhood graph. Use None for a fully connected graph (not recommended).
+            k (int): Number if nearest neighbors if the graph is knn type. Not used for a radius graph.
+            radius (float): neighborhood distance for a radius graph. Not used for a knn graph.
+                Right now, the radius is in fraction of total domain. E.g., if the overall range of the
+                seismic network is 2 degrees, a radius of 0.2 will be 0.4 degrees.
 
         """
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -43,7 +50,15 @@ class PhaseNOPredictor:
                           Consider a 'knn' or 'radius' graph_type instead.")
             return generate_edge_index(self.net)
 
-    def __call__(self, X_):
+    def __call__(self, traces):
+        """Generate predictions from seismic waveforms
+
+        Args:
+            traces (numpy.ndarray | torch.Tensor): (n stations x n channels x n samples) dimensional array/tensor
+                of seismic data
+        Returns:
+            torch.Tensor : A (n stations x 2 x nsamples) dimensional tensor of pick probabilties.
+        """
         # need to normalize?
         # X is a (num_station x 5 x nsamples) tensor
         # station index, [E trace, N trace, Z trace, x position, y position], samples
@@ -51,22 +66,23 @@ class PhaseNOPredictor:
         # X_ should be (n_stations x 3 (ENZ) x n_samples array) of data
         # then need to add the x and y position axes to it
 
+        if type(traces) != torch.Tensor:
+            traces = torch.tensor(X, dtype=torch.float)
         eps = 1e-6
         # normalize
-        X_mean = torch.mean(X_,axis=-1,keepdims=True)
-        X_std  = torch.std(X_,axis=-1,keepdims=True)
-        X_ = (X_-X_mean)/(X_std+eps)
+        traces_mean = torch.mean(traces,axis=-1,keepdims=True)
+        traces_std  = torch.std(traces,axis=-1,keepdims=True)
+        traces = (traces-traces_mean)/(traces_std+eps)
         # why divide by 10?
-        X_ /= 10
+        traces /= 10
 
         # add coordinates to each station
-        Y = np.stack([self.net.x, self.net.y]).T
-        Y = torch.from_numpy(Y).float()
-        Y = Y.unsqueeze(-1).repeat((1,1,X_.shape[-1])) # matches dims 0 and 2 to X_ dims
-        X = torch.concat([X_, Y], dim=1)
+        coords = np.stack([self.net.x, self.net.y]).T
+        coords = torch.from_numpy(coords).float()
+        coords = coords.unsqueeze(-1).repeat((1,1,traces.shape[-1])) # matches dims 0 and 2 to X_ dims
+        traces = torch.concat([traces, coords], dim=1)
 
-        if type(X) != torch.Tensor:
-            X = torch.tensor(X, dtype=torch.float)
+
         X = X.float().to(self.device)
         return torch.sigmoid(self.model.forward((X,None,self.edge_index)))
 
