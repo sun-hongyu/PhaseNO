@@ -8,7 +8,7 @@ from .phaseno import (
     FNO1D,
 )
 
-from wrapper import PhaseNOPredictor
+from .wrapper import PhaseNOPredictor
 
 """
     extract_amplitude,
